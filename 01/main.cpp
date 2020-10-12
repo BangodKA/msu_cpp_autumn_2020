@@ -24,7 +24,7 @@ int main() {
 
   one_allocator.reset();
 
-  one_allocator.alloc(10);
+  assert(one_allocator.alloc(10) != nullptr);
 
   assert(one_allocator.alloc(1) == nullptr);
 

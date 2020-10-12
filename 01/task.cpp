@@ -18,9 +18,11 @@ char* Allocator::alloc(size_t size) {
 
   char* res = beginning + offset;
   size_t new_offset = offset + size;
+
   if (new_offset > capacity) {
     return nullptr;
   }
+  
   offset = new_offset;
   return res;
 }

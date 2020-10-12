@@ -8,6 +8,7 @@ class Allocator {
   char* alloc(size_t size);
   void reset();
   ~Allocator();
+
  private:
   char *beginning = nullptr;
   size_t capacity = 0;
