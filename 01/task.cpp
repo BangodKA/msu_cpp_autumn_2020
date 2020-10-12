@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <iostream>
 
 #include "task.hpp"
 
@@ -16,7 +15,7 @@ char* Allocator::alloc(size_t size) {
   if (size <= 0) {
     return nullptr;
   }
-  
+
   char* res = beginning + offset;
   size_t new_offset = offset + size;
   if (new_offset > capacity) {
