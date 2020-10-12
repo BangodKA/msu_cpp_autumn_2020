@@ -16,4 +16,4 @@ test:
 	./main
 
 clean:
-	rm -rf *.o my_prog
+	rm -rf *.o main
