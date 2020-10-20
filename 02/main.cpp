@@ -41,7 +41,8 @@ int main() {
                      "Found STRING token: " << "just" << std::endl <<
                      "Found STRING token: " << "fine!" << std::endl <<
                      "Found STRING token: " << "o7" << std::endl <<
-                     "Found STRING token: " << "n0t" << std::endl <<
+                     "Found STRING token: " << "n0t," << std::endl <<
+                     "Found STRING token: " << "5orry" << std::endl <<
                      "Found STRING token: " << "(((((" << std::endl <<
                      "Found STRING token: " << "123.345" << std::endl <<
                      "\nParsing finished!" << std::endl;
@@ -63,8 +64,7 @@ int main() {
   std::ostringstream res;
   std::vector<uint64_t> real_digit_tokens = {123, 237458};
   res << "\nParsing started!" << std::endl <<
-         "This " << "program " << "works " << "just " <<
-         "fine! " << "o7 " << "n0t " << "((((( " << "123.345 " <<
+         "This program works just fine! o7 n0t, 5orry ((((( 123.345 " <<
          "\nAll digit tokens in text:" << real_digit_tokens <<
          "Finished parsing!" << std::endl;
 
