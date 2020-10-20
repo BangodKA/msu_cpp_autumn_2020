@@ -28,11 +28,11 @@ std::string TokenParser::Parse() {
 
   for (const char symbol : data + '\n') {
 
-    if (symbol != ' ' and symbol != '\t' and 
-        symbol != '\n' and symbol != '\r') {
+    if (symbol != ' ' && symbol != '\t' && 
+        symbol != '\n' && symbol != '\r') {
       current_string_token += symbol;
       if (is_digit_token) {
-        if (symbol < '0' or symbol > '9') {
+        if (symbol < '0' || symbol > '9') {
           is_digit_token = false;
         }
       }
