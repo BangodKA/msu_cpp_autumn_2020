@@ -51,7 +51,7 @@ int main() {
 
 
   std::vector<uint64_t> digit_tokens;
-  parser.SetStringTokenCallback([&parser](std::string token)
+  parser.SetStringTokenCallback([&parser](const std::string& token)
                                 {parser.GetStream() << token << ' ';});
 
   parser.SetDigitTokenCallback([&digit_tokens](uint64_t token)

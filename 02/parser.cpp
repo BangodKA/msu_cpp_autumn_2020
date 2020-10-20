@@ -1,3 +1,4 @@
+#include <cctype>
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -7,16 +8,16 @@
 
 TokenParser::TokenParser(const std::string& data_) : data(data_) {}
 
-void TokenParser::SetStartCallback(ParseProcess StartCallback_) {
+void TokenParser::SetStartCallback(const ParseProcess& StartCallback_) {
   StartCallback = StartCallback_;
 }
-void TokenParser::SetDigitTokenCallback(ProcessDigitToken DigitTokenCallback_) {
+void TokenParser::SetDigitTokenCallback(const ProcessDigitToken& DigitTokenCallback_) {
   DigitTokenCallback = DigitTokenCallback_;
 }
-void TokenParser::SetStringTokenCallback(ProcessStringToken StringTokenCallback_) {
+void TokenParser::SetStringTokenCallback(const ProcessStringToken& StringTokenCallback_) {
   StringTokenCallback = StringTokenCallback_;
 }
-void TokenParser::SetEndCallback(ParseProcess EndCallback_) {
+void TokenParser::SetEndCallback(const ParseProcess& EndCallback_) {
   EndCallback = EndCallback_;
 }
 
@@ -28,11 +29,10 @@ std::string TokenParser::Parse() {
 
   for (const char symbol : data + '\n') {
 
-    if (symbol != ' ' && symbol != '\t' && 
-        symbol != '\n' && symbol != '\r') {
+    if (!isspace(symbol)) {
       current_string_token += symbol;
       if (is_digit_token) {
-        if (symbol < '0' || symbol > '9') {
+        if (!isdigit(symbol)) {
           is_digit_token = false;
         }
       }

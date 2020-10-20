@@ -10,15 +10,15 @@
 class TokenParser {
   using ParseProcess = std::function<void ()>;
   using ProcessDigitToken = std::function<void (uint64_t token)>;
-  using ProcessStringToken = std::function<void (std::string &token)>;
+  using ProcessStringToken = std::function<void (const std::string& token)>;
 
  public:
   TokenParser(const std::string& data_);
 
-  void SetStartCallback(ParseProcess);
-  void SetDigitTokenCallback(ProcessDigitToken);
-  void SetStringTokenCallback(ProcessStringToken);
-  void SetEndCallback(ParseProcess);
+  void SetStartCallback(const ParseProcess& StartCallback_);
+  void SetDigitTokenCallback(const ProcessDigitToken& DigitTokenCallback_);
+  void SetStringTokenCallback(const ProcessStringToken& StringTokenCallback_);
+  void SetEndCallback(const ParseProcess& EndCallback_);
 
   std::string Parse();
 
@@ -32,6 +32,6 @@ class TokenParser {
 
   ProcessDigitToken DigitTokenCallback = [this](uint64_t token) 
                                          {parsing_res << "Found DIGIT token: " << token << std::endl;};
-  ProcessStringToken StringTokenCallback = [this](std::string& token) 
-                                         {parsing_res << "Found STRING token: " << token << std::endl;};
+  ProcessStringToken StringTokenCallback = [this](const std::string& token) 
+                                           {parsing_res << "Found STRING token: " << token << std::endl;};
 };
