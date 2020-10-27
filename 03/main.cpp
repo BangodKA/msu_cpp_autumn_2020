@@ -26,8 +26,25 @@ int main() {
   try {
     test + first;
   } catch (const std::out_of_range  & e) {
-    errc << e.what();
+    errc << e.what() << std::endl;
   }
+  try {
+    test[10][0];
+  } catch (const std::out_of_range  & e) {
+    errc << e.what() << std::endl;
+  }
+
+  try {
+    test[0][10];
+  } catch (const std::out_of_range  & e) {
+    errc << e.what() << std::endl;
+  }
+
+  std::stringstream real_errc;
+  real_errc << "Wrong dims" << std::endl <<
+               "Too big row" << std::endl <<
+               "Too big col" << std::endl;
+  assert(errc.str() == real_errc.str());
   
   first *= 3;
   double z = first[1][2];
