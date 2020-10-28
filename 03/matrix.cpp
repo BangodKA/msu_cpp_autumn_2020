@@ -71,7 +71,7 @@ Matrix::Matrix(size_t cols_, size_t rows_) : cols(cols_), rows(rows_) {
 
 Matrix::~Matrix() {
   for (size_t i = 0; i < rows; ++i) {
-    delete [] matrix[i];
+    matrix[i]->~Row();
   }
   delete [] matrix;
 }
