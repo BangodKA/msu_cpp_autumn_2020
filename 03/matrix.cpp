@@ -10,8 +10,32 @@ Row::Row(size_t cols_) : cols(cols_) {
   }
 }
 
+Row::Row(const Row& other_obj) : cols(other_obj.cols) {
+  row = new int[cols];
+  for (size_t i = 0; i < cols; ++i) {
+    row[i] = other_obj[i];
+  }
+}
+
+Row& Row::operator=(const Row& other_obj) {
+  if (row != other_obj.row) {
+    if (row != nullptr) {
+      delete [] row;
+    }
+    cols = other_obj.cols;
+    row = new int[cols];
+    for (size_t i = 0; i < cols; ++i) {
+      row[i] = other_obj[i];
+    }
+  }
+  return *this;
+}
+
 Row::~Row() {
-  delete [] row;
+  if (row != nullptr) {
+    delete [] row;
+    row = nullptr;
+  }
 }
 
 const int& Row::operator[](size_t i) const {
@@ -36,6 +60,10 @@ Row& Row::operator*=(int num) {
 }
 
 Row Row::operator+(const Row& rhs) const {
+  if (cols != rhs.cols) {
+    throw std::out_of_range("Wrong row length");
+  }
+
   Row res(cols);
   for (size_t i = 0; i < cols; ++i) {
     res[i] = row[i] + rhs[i];
@@ -44,6 +72,10 @@ Row Row::operator+(const Row& rhs) const {
 }
 
 bool Row::operator==(const Row& rhs) const {
+  if (cols != rhs.cols) {
+    throw std::out_of_range("Wrong row length");
+  }
+
   for (size_t i = 0; i < cols; ++i) {
     if (row[i] != rhs[i]) {
       return false;
@@ -53,6 +85,10 @@ bool Row::operator==(const Row& rhs) const {
 }
 
 bool Row::operator!=(const Row& rhs) const {
+  if (cols != rhs.cols) {
+    throw std::out_of_range("Wrong row length");
+  }
+  
   for (size_t i = 0; i < cols; ++i) {
     if (row[i] != rhs[i]) {
       return true;
@@ -70,17 +106,40 @@ std::ostream& operator<<(std::ostream& out, const Row& data) {
 
 
 Matrix::Matrix(size_t cols_, size_t rows_) : cols(cols_), rows(rows_) {
-  matrix = new Row* [rows];
+  matrix = new Row [rows];
   for (size_t i = 0; i < rows; ++i) {
-    matrix[i] = new Row(cols);
+    matrix[i] = Row(cols);
   }
 }
 
-Matrix::~Matrix() {
+Matrix::Matrix(const Matrix& other_obj) : cols(other_obj.cols), 
+                                          rows(other_obj.rows) {
+  matrix = new Row [rows];
   for (size_t i = 0; i < rows; ++i) {
-    matrix[i]->~Row();
+    matrix[i] = other_obj[i];
   }
-  delete [] matrix;
+}
+
+Matrix& Matrix::operator=(const Matrix& other_obj) {
+  if (matrix != other_obj.matrix) {
+    if (matrix != nullptr) {
+      delete [] matrix;
+    }
+    rows = other_obj.rows;
+    cols = other_obj.cols;
+    matrix = new Row [rows];
+    for (size_t i = 0; i < cols; ++i) {
+      matrix[i] = other_obj[i];
+    }
+  }
+  return *this;
+}
+
+Matrix::~Matrix() {
+  if (matrix != nullptr) {
+    delete [] matrix;
+    matrix = nullptr;
+  }
 }
 
 size_t Matrix::GetCols() const {
@@ -95,19 +154,19 @@ const Row& Matrix::operator[](size_t i) const {
   if (i >= rows) {
     throw std::out_of_range("Too big row");
   }
-  return *matrix[i];
+  return matrix[i];
 }
 
 Row& Matrix::operator[](size_t i) {
   if (i >= rows) {
     throw std::out_of_range("Too big row");
   }
-  return *matrix[i];
+  return matrix[i];
 }
 
 Matrix& Matrix::operator*=(int num) {
   for (size_t i = 0; i < rows; ++i) {
-    *matrix[i] *= num;
+    matrix[i] *= num;
   }
   return *this;
 }
@@ -119,14 +178,18 @@ Matrix Matrix::operator+(const Matrix& rhs) const {
 
   Matrix res(cols, rows);
   for (size_t i = 0; i < rows; ++i) {
-    new (&res[i]) Row (*matrix[i] + rhs[i]);
+    res[i] = matrix[i] + rhs[i];
   }
   return res;
 }
 
 bool Matrix::operator==(const Matrix& rhs) const {
+  if (rhs.rows != rows || rhs.cols != cols) {
+    throw std::out_of_range("Wrong dims");
+  }
+
   for (size_t i = 0; i < rows; ++i) {
-    if (*matrix[i] != rhs[i]) {
+    if (matrix[i] != rhs[i]) {
       return false;
     }
   }
@@ -134,8 +197,12 @@ bool Matrix::operator==(const Matrix& rhs) const {
 }
 
 bool Matrix::operator!=(const Matrix& rhs) const {
+  if (rhs.rows != rows || rhs.cols != cols) {
+    throw std::out_of_range("Wrong dims");
+  }
+
   for (size_t i = 0; i < rows; ++i) {
-    if (*matrix[i] != rhs[i]) {
+    if (matrix[i] != rhs[i]) {
       return true;
     }
   }
