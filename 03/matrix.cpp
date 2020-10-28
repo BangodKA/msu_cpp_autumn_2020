@@ -14,7 +14,14 @@ Row::~Row() {
   delete [] row;
 }
 
-int& Row::operator[](size_t i) const {
+const int& Row::operator[](size_t i) const {
+  if (i >= cols) {
+    throw std::out_of_range("Too big col");
+  }
+  return row[i];
+}
+
+int& Row::operator[](size_t i) {
   if (i >= cols) {
     throw std::out_of_range("Too big col");
   }
@@ -84,7 +91,14 @@ size_t Matrix::GetRows() const {
   return rows;
 }
 
-Row& Matrix::operator[](size_t i) const {
+const Row& Matrix::operator[](size_t i) const {
+  if (i >= rows) {
+    throw std::out_of_range("Too big row");
+  }
+  return *matrix[i];
+}
+
+Row& Matrix::operator[](size_t i) {
   if (i >= rows) {
     throw std::out_of_range("Too big row");
   }

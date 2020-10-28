@@ -6,7 +6,8 @@ class Row {
  public:
   Row(size_t cols_ = 0);
   ~Row();
-  int& operator[](size_t i) const;
+  const int& operator[](size_t i) const;
+  int& operator[](size_t i);
   Row& operator*=(int num);
   Row operator+(const Row& rhs) const;
   bool operator==(const Row& rhs) const;
@@ -23,7 +24,8 @@ class Matrix {
   ~Matrix();
   size_t GetCols() const;
   size_t GetRows() const;
-  Row& operator[](size_t i) const;
+  const Row& operator[](size_t i) const;
+  Row& operator[](size_t i);
   Matrix& operator*=(int num);
   Matrix operator+(const Matrix& rhs) const;
   bool operator==(const Matrix& rhs) const;
