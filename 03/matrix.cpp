@@ -10,6 +10,10 @@ Row::Row(size_t cols_) : cols(cols_) {
   }
 }
 
+Row::~Row() {
+  delete [] row;
+}
+
 int& Row::operator[](size_t i) const {
   if (i >= cols) {
     throw std::out_of_range("Too big col");
@@ -63,6 +67,13 @@ Matrix::Matrix(size_t cols_, size_t rows_) : cols(cols_), rows(rows_) {
   for (size_t i = 0; i < rows; ++i) {
     matrix[i] = new Row(cols);
   }
+}
+
+Matrix::~Matrix() {
+  for (size_t i = 0; i < rows; ++i) {
+    delete [] matrix[i];
+  }
+  delete [] matrix;
 }
 
 size_t Matrix::GetCols() const {

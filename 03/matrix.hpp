@@ -5,6 +5,7 @@
 class Row {
  public:
   Row(size_t cols_ = 0);
+  ~Row();
   int& operator[](size_t i) const;
   Row& operator*=(int num);
   Row operator+(const Row& rhs) const;
@@ -19,6 +20,7 @@ class Row {
 class Matrix {
  public:
   Matrix(size_t cols_, size_t rows_);
+  ~Matrix();
   size_t GetCols() const;
   size_t GetRows() const;
   Row& operator[](size_t i) const;
