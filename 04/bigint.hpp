@@ -5,8 +5,8 @@
 
 class BigInt {
  public:
-  BigInt(const size_t size);
-  BigInt(const std::string &data_);
+  BigInt(int value);
+  BigInt(const std::string &data_ = "", size_t size_ = 0);
   BigInt(const BigInt &other_bigint);
   BigInt(BigInt &&other_bigint);
   BigInt& operator=(const BigInt &other_bigint);
@@ -32,5 +32,4 @@ class BigInt {
   char *data;
   int sign = 1;
   size_t size;
-  size_t capacity;
 };
