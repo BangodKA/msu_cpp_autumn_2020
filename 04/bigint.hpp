@@ -6,7 +6,7 @@
 class BigInt {
  public:
   BigInt(int value);
-  BigInt(const std::string &data_ = "", size_t size_ = 0);
+  BigInt(const std::string &data_ = "", size_t size_ = 1);
   BigInt(const BigInt &other_bigint);
   BigInt(BigInt &&other_bigint);
   BigInt& operator=(const BigInt &other_bigint);
@@ -26,6 +26,11 @@ class BigInt {
   bool operator!=(const BigInt &other_bigint) const;
  private:
   friend std::ostream& operator<<(std::ostream &out, const BigInt &bigint);
+
+  void ReverseNumber(const std::string not_reversed, int offset);
+  int SubstractWithLeading(const BigInt &lhs, const BigInt &rhs, bool reverse);
+  void Realloc(int capacity = -1);
+  void AddExtraDig(char dec);
   BigInt operator*(int digit) const;
   int compare_abs(const BigInt &other_bigint) const;
   

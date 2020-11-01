@@ -35,8 +35,8 @@ int main() {
 
   assert(BigInt("12") * BigInt("12") == BigInt("144"));
   assert(BigInt("12") * BigInt("-12") == BigInt("-144"));
-  assert(-BigInt("12") * BigInt("-12") == BigInt("144"));
-  assert(-BigInt("12") * BigInt("12") == BigInt("-144"));
+  assert(-BigInt("16") * BigInt("-16") == BigInt("256"));
+  assert(-BigInt("18") * BigInt("13") == BigInt("-234"));
   assert(BigInt("127322394872386765765776234658423424298765432345678765432345678765432345678765998787534256447657534") *
          BigInt("-842832748327467251467252782364872364872364283746823674287") == 
          BigInt("-107311483993928761808290241465833184096365338489125984564625962103600164884669283892552896005713442053260530230089239286797955867480988130578241836137628258"));
@@ -70,7 +70,7 @@ int main() {
   BigInt cp(a);
   assert(cp == std::string("246913578024691357802469135782"));
 
-  std::cout << "Tets passed! Program accepted?" << std::endl;
+  std::cout << "Tests passed! Program accepted?" << std::endl;
   
   return 0;
 }
