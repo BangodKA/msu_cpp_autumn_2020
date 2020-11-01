@@ -146,13 +146,13 @@ BigInt BigInt::operator-(const BigInt &other_bigint) const {
     return *this + (-other_bigint);
   }
 
-  int comp_res = this->compare(other_bigint);
+  int comp_res = this->compare_abs(other_bigint);
   
-  if (comp_res == -1) {
+  if (comp_res == 0) {
     return BigInt("0");
   }
 
-  bool reverse = comp_res;
+  bool reverse = (comp_res == 1);
 
 
   BigInt res(std::max(size, other_bigint.size));
@@ -242,12 +242,12 @@ BigInt BigInt::operator-() const {
   return res;
 }
 
-int BigInt::compare(const BigInt &other_bigint) const {
+int BigInt::compare_abs(const BigInt &other_bigint) const {
   if (other_bigint.size > size) {
     return 1;
   }
   if (other_bigint.size < size) {
-    return 0;
+    return -1;
   }
 
   for (size_t i = size; i > 0; --i) {
@@ -255,34 +255,73 @@ int BigInt::compare(const BigInt &other_bigint) const {
       return 1;
     } 
     if (other_bigint.data[i - 1] < data[i - 1]) {
-      return 0;
+      return -1;
     }
   }
-  return -1;
+  return 0;
 }
 
 bool BigInt::operator<(const BigInt &other_bigint) const {
+  if (sign > other_bigint.sign) {
+    return false;
+  }
 
+  if (sign < other_bigint.sign) {
+    return true;
+  }
+  
+  return this->compare_abs(other_bigint) * sign == 1;
 }
 
 bool BigInt::operator<=(const BigInt &other_bigint) const {
+  if (sign > other_bigint.sign) {
+    return false;
+  }
 
+  if (sign < other_bigint.sign) {
+    return true;
+  }
+  return this->compare_abs(other_bigint) * sign != -1;
 }
 
 bool BigInt::operator>(const BigInt &other_bigint) const {
+  if (sign < other_bigint.sign) {
+    return false;
+  }
 
+  if (sign > other_bigint.sign) {
+    return true;
+  }
+
+  return this->compare_abs(other_bigint) * sign == -1;
 }
 
 bool BigInt::operator>=(const BigInt &other_bigint) const {
+  if (sign < other_bigint.sign) {
+    return false;
+  }
 
+  if (sign > other_bigint.sign) {
+    return true;
+  }
+
+  return this->compare_abs(other_bigint) * sign <= -1;
 }
 
 bool BigInt::operator==(const BigInt &other_bigint) const {
+  if (sign != other_bigint.sign) {
+    return false;
+  }
 
+  return this->compare_abs(other_bigint) == 0;
 }
 
 bool BigInt::operator!=(const BigInt &other_bigint) const {
+  if (sign != other_bigint.sign) {
+    return true;
+  }
 
+  return this->compare_abs(other_bigint) != 0;
 }
 
 std::ostream &operator<<(std::ostream &out, const BigInt &bigint) {

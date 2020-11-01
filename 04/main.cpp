@@ -50,6 +50,17 @@ int main() {
   std::cout << -BigInt("12") * BigInt("-12") << std::endl;
   std::cout << -BigInt("12") * BigInt("12") << std::endl;
   std::cout << BigInt("12732239487238") * BigInt("-8428327483274") << std::endl;
+
+  std::cout << (BigInt("12") == BigInt("12")) << std::endl;
+  std::cout << (BigInt("12") == BigInt("-12")) << std::endl;
+  std::cout << (BigInt("12") != BigInt("-12")) << std::endl;
+  std::cout << (BigInt("12") != BigInt("12")) << std::endl;
+
+  std::cout << (-BigInt("12") < BigInt("-12")) << std::endl;
+  std::cout << (-BigInt("12") < BigInt("12")) << std::endl;
+  std::cout << (-BigInt("123") < BigInt("-12")) << std::endl;
+  std::cout << (-BigInt("12") < BigInt("-12")) << std::endl;
+  std::cout << (-BigInt("12") < -BigInt("1234")) << std::endl;
   
   return 0;
 }

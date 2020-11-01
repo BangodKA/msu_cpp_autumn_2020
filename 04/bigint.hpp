@@ -27,7 +27,7 @@ class BigInt {
  private:
   friend std::ostream& operator<<(std::ostream &out, const BigInt &bigint);
   BigInt operator*(int digit) const;
-  int compare(const BigInt &other_bigint) const;
+  int compare_abs(const BigInt &other_bigint) const;
   
   char *data;
   int sign = 1;
