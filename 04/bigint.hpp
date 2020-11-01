@@ -12,22 +12,22 @@ class BigInt {
   BigInt& operator=(BigInt &&other_bigint);
   ~BigInt();
 
-  BigInt operator+(const BigInt &other_bigint);
-  BigInt operator-(const BigInt &other_bigint);
-  BigInt operator*(const BigInt &other_bigint);
-  BigInt operator-();
+  BigInt operator+(const BigInt &other_bigint) const;
+  BigInt operator-(const BigInt &other_bigint) const;
+  BigInt operator*(const BigInt &other_bigint) const;
+  BigInt operator-() const;
 
-  bool operator<(const BigInt &other_bigint);
-  bool operator<=(const BigInt &other_bigint);
-  bool operator>(const BigInt &other_bigint);
-  bool operator>=(const BigInt &other_bigint);
-  bool operator==(const BigInt &other_bigint);
-  bool operator!=(const BigInt &other_bigint);
+  bool operator<(const BigInt &other_bigint) const;
+  bool operator<=(const BigInt &other_bigint) const;
+  bool operator>(const BigInt &other_bigint) const;
+  bool operator>=(const BigInt &other_bigint) const;
+  bool operator==(const BigInt &other_bigint) const;
+  bool operator!=(const BigInt &other_bigint) const;
  private:
   friend std::ostream& operator<<(std::ostream &out, const BigInt &bigint);
   
   char *data;
-  int sign;
+  int sign = 1;
   size_t size;
   size_t capacity;
 };
