@@ -42,8 +42,14 @@ int main() {
   // std::cout <<  BigInt("333333333333333433333333289") - BigInt("333333333333373333333333987") << std::endl;
   // std::cout <<  BigInt("333333333333333433333333987") - BigInt("333333333333373333333333289") << std::endl;
 
-  std::cout << BigInt("99") + BigInt("90") << std::endl;
-  std::cout << BigInt("-99") + -BigInt("90") << std::endl;
+  // std::cout << BigInt("99") + BigInt("90") << std::endl;
+  // std::cout << BigInt("-99") + -BigInt("90") << std::endl;
+
+  std::cout << BigInt("12") * BigInt("12") << std::endl;
+  std::cout << BigInt("12") * BigInt("-12") << std::endl;
+  std::cout << -BigInt("12") * BigInt("-12") << std::endl;
+  std::cout << -BigInt("12") * BigInt("12") << std::endl;
+  std::cout << BigInt("12732239487238") * BigInt("-8428327483274") << std::endl;
   
   return 0;
 }

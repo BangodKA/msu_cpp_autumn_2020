@@ -5,6 +5,10 @@
 
 #include "bigint.hpp"
 
+BigInt::BigInt(const size_t size) : size(size) {
+  data = new char [size];
+}
+
 BigInt::BigInt(const std::string &data_) : capacity(data_.size()) {
   if (data_.size() == 0) {
     throw std::runtime_error("Error: not a number!");
@@ -31,7 +35,7 @@ BigInt::BigInt(const std::string &data_) : capacity(data_.size()) {
         throw std::runtime_error("Error: not a number!");
     }
 
-    data[i - offset] = data_[i];
+    data[size - 1 - i + offset] = data_[i];
   }
 }
 
@@ -108,33 +112,33 @@ BigInt BigInt::operator+(const BigInt &other_bigint) const {
     return *this - (-other_bigint);
   }
 
-  size_t res_size = std::max(size, other_bigint.size) + 1;
-  char *res = new char [res_size];
-  res[0] = (sign == 1) ? '+' : '-';
+  BigInt res(std::max(size, other_bigint.size));
+  res.sign = sign;
   int dec = 0;
 
-  for (size_t i = 1; i < res_size; ++i) {
-    int first_dig = (i <= size) ? (data[size - i] - '0')  : 0;
-    int second_dig = (i <= other_bigint.size) ? 
-                     (other_bigint.data[other_bigint.size - i] - '0') : 0;
+  for (size_t i = 0; i < res.size; ++i) {
+    int first_dig = (i < size) ? (data[i] - '0')  : 0;
+    int second_dig = (i < other_bigint.size) ? 
+                     (other_bigint.data[i] - '0') : 0;
     
     int next_dig = first_dig + second_dig + dec;  
-    res[res_size - i] = '0' + next_dig % 10;
+    res.data[i] = '0' + next_dig % 10;
 
     dec = next_dig / 10;
   }
 
   if (dec == 1) {
-    int new_size = res_size + 1;
-    char *new_res = new char [new_size];
-    for (size_t i = 0; i < new_size; ++i) {
-      new_res[i] = (i != 1) ? res[i - (i > 1)] : '1';
+    res.size++;
+    char *new_res = new char [res.size];
+    new_res[res.size - 1] = '1';
+    for (size_t i = 0; i < res.size - 1; ++i) {
+      new_res[i] = res.data[i];
     }
-    delete [] res;
-    res = new_res;
+    delete [] res.data;
+    res.data = new_res;
   }
   
-  return BigInt(res);
+  return res;
 }
 
 BigInt BigInt::operator-(const BigInt &other_bigint) const {
@@ -142,41 +146,24 @@ BigInt BigInt::operator-(const BigInt &other_bigint) const {
     return *this + (-other_bigint);
   }
 
-  char res_sign = '\0';
-  bool reverse = false;
-  if (other_bigint.size > size) {
-    reverse = true;
-    res_sign = (sign == 1) ? '-' : '+';
-  } else if (other_bigint.size < size) {
-    res_sign = (sign == 1) ? '+' : '-';
-  } else {
-    for (size_t i = 0; i < size; ++i) {
-      if (other_bigint.data[i] > data[i]) {
-        reverse = true;
-        res_sign = (sign == 1) ? '-' : '+';
-        break;
-      } 
-      if (other_bigint.data[i] < data[i]) {
-        res_sign = (sign == 1) ? '+' : '-';
-        break;
-      }
-    }
-  }
+  int comp_res = this->compare(other_bigint);
   
-  if (res_sign == '\0') {
+  if (comp_res == -1) {
     return BigInt("0");
   }
 
+  bool reverse = comp_res;
 
-  size_t res_size = std::max(size, other_bigint.size) + 1;
-  char *res = new char [res_size];
-  res[0] = res_sign;
+
+  BigInt res(std::max(size, other_bigint.size));
+  res.sign = ((sign == 1) == reverse) ? -1 : 1;
+
   int dec = 0;
   int leading_zero_counter = 0;
-  for (size_t i = 1; i < res_size; ++i) {
-    int first_dig = (i <= size) ? (data[size - i] - '0')  : 0;
-    int second_dig = (i <= other_bigint.size) ? 
-                     (other_bigint.data[other_bigint.size - i] - '0') : 0;
+  for (size_t i = 0; i < res.size; ++i) {
+    int first_dig = (i < size) ? (data[i] - '0')  : 0;
+    int second_dig = (i < other_bigint.size) ? 
+                     (other_bigint.data[i] - '0') : 0;
     
     int next_dig = dec + ((reverse) ? second_dig - first_dig : first_dig - second_dig);
 
@@ -189,25 +176,64 @@ BigInt BigInt::operator-(const BigInt &other_bigint) const {
       dec = 0;
     }
 
-    res[res_size - i] = '0' + next_dig % 10;
+    res.data[i] = '0' + next_dig % 10;
   }
 
   if (leading_zero_counter != 0) {
-    int new_size = res_size - leading_zero_counter - 1;
-    char *new_res = new char [new_size];
-    new_res[0] = res[0];
-    for (size_t i = leading_zero_counter + 1; i < res_size; ++i) {
-      new_res[i - leading_zero_counter] = res[i];
+    res.size -= leading_zero_counter;
+    char *new_res = new char [res.size];
+
+    for (size_t i = 0; i < res.size; ++i) {
+      new_res[i] = res.data[i];
     }
-    delete [] res;
-    res = new_res;
+    delete [] res.data;
+    res.data = new_res;
   }
   
-  return BigInt(res);
+  return res;
+}
+
+BigInt BigInt::operator*(int digit) const {
+  BigInt part_res(size);
+
+  int dec = 0;
+  for (size_t i = 0; i < size; ++i) {
+    int next_dig = digit * (data[i] - '0');
+    part_res.data[i] = '0' + (next_dig % 10 + dec);
+    dec = next_dig / 10;
+  }
+
+  if (dec > 0) {
+    part_res.size++;
+    char *new_res = new char [part_res.size];
+    new_res[part_res.size - 1] = dec + '0';
+    for (size_t i = 0; i < part_res.size - 1; ++i) {
+      new_res[i] = part_res.data[i];
+    }
+    delete [] part_res.data;
+    part_res.data = new_res;
+  }
+
+  return part_res;
 }
 
 BigInt BigInt::operator*(const BigInt &other_bigint) const {
+  BigInt res("0");
 
+  for (size_t i = 0; i < other_bigint.size; ++i) {
+    size_t cur_size = size + i;
+    BigInt cur_part(cur_size);
+    
+    for (size_t k = 0; k < cur_size; ++k) {
+      cur_part.data[k] = (cur_size - k <= size) ? data[k - i] : '0';
+    }
+
+    res = res + cur_part * (other_bigint.data[i] - '0');
+  }
+
+  res.sign = sign * other_bigint.sign;
+
+  return res;
 }
 
 BigInt BigInt::operator-() const {
@@ -216,6 +242,24 @@ BigInt BigInt::operator-() const {
   return res;
 }
 
+int BigInt::compare(const BigInt &other_bigint) const {
+  if (other_bigint.size > size) {
+    return 1;
+  }
+  if (other_bigint.size < size) {
+    return 0;
+  }
+
+  for (size_t i = size; i > 0; --i) {
+    if (other_bigint.data[i - 1] > data[i - 1]) {
+      return 1;
+    } 
+    if (other_bigint.data[i - 1] < data[i - 1]) {
+      return 0;
+    }
+  }
+  return -1;
+}
 
 bool BigInt::operator<(const BigInt &other_bigint) const {
 
@@ -245,8 +289,8 @@ std::ostream &operator<<(std::ostream &out, const BigInt &bigint) {
   if (bigint.sign < 0) {
     out << '-';
   }
-  for (size_t i = 0; i < bigint.size; ++i) {
-    out << bigint.data[i];
+  for (size_t i = bigint.size; i > 0; --i) {
+    out << bigint.data[i - 1];
   }
   return out;
 }
