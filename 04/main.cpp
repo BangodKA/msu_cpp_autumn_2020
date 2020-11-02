@@ -1,4 +1,5 @@
 #include <cassert>
+#include <sstream>
 #include <string>
 
 #include "bigint.hpp"
@@ -62,6 +63,9 @@ int main() {
   assert(c == std::string("123456789012345678901234567892"));
   BigInt d;
   d = std::move(c);
+  std::stringstream moved_res;
+  moved_res << c;
+  assert(moved_res.str() == "");
   assert(d == std::string("123456789012345678901234567892"));
   a = d + b;
   assert(b == std::string("123456789012345678901234567890"));
