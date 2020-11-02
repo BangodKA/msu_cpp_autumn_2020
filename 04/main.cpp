@@ -55,6 +55,7 @@ int main() {
   assert(BigInt(-98) <= BigInt(1));
   assert(BigInt(23143432) != BigInt(23153432));
 
+  std::stringstream output_res;
   BigInt a = 1;
   BigInt b("123456789012345678901234567890");
   assert(a == 1);
@@ -63,9 +64,7 @@ int main() {
   assert(c == std::string("123456789012345678901234567892"));
   BigInt d;
   d = std::move(c);
-  std::stringstream moved_res;
-  moved_res << c;
-  assert(moved_res.str() == "");
+  output_res << c << a;
   assert(d == std::string("123456789012345678901234567892"));
   a = d + b;
   assert(b == std::string("123456789012345678901234567890"));
@@ -73,6 +72,14 @@ int main() {
   assert(a == std::string("246913578024691357802469135782"));
   BigInt cp(a);
   assert(cp == std::string("246913578024691357802469135782"));
+
+  output_res << d << a;
+  
+  std::stringstream real_res;
+  real_res << 
+  "1123456789012345678901234567892246913578024691357802469135782";
+
+  assert(output_res.str() == real_res.str());
 
   std::cout << "Tests passed! Program accepted?" << std::endl;
   
