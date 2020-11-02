@@ -32,7 +32,7 @@ class BigInt {
   void Realloc(int capacity = -1);
   void AddExtraDig(char dec);
   BigInt operator*(int digit) const;
-  int compare_abs(const BigInt &other_bigint) const;
+  int CompareAbs(const BigInt &other_bigint) const;
   
   char *data;
   int sign = 1;

@@ -148,7 +148,7 @@ BigInt BigInt::operator-(const BigInt &other_bigint) const {
     return *this + (-other_bigint);
   }
 
-  int comp_res = this->compare_abs(other_bigint);
+  int comp_res = this->CompareAbs(other_bigint);
   
   if (comp_res == 0) {
     return BigInt("0");
@@ -199,7 +199,7 @@ bool BigInt::operator<(const BigInt &other_bigint) const {
     return sign < other_bigint.sign;
   }
   
-  return this->compare_abs(other_bigint) * sign == 1;
+  return this->CompareAbs(other_bigint) * sign == 1;
 }
 
 bool BigInt::operator<=(const BigInt &other_bigint) const {
@@ -207,7 +207,7 @@ bool BigInt::operator<=(const BigInt &other_bigint) const {
     return sign < other_bigint.sign;
   }
 
-  return this->compare_abs(other_bigint) * sign != -1;
+  return this->CompareAbs(other_bigint) * sign != -1;
 }
 
 bool BigInt::operator>(const BigInt &other_bigint) const {
@@ -215,7 +215,7 @@ bool BigInt::operator>(const BigInt &other_bigint) const {
     return sign > other_bigint.sign;
   }
 
-  return this->compare_abs(other_bigint) * sign == -1;
+  return this->CompareAbs(other_bigint) * sign == -1;
 }
 
 bool BigInt::operator>=(const BigInt &other_bigint) const {
@@ -223,7 +223,7 @@ bool BigInt::operator>=(const BigInt &other_bigint) const {
     return sign > other_bigint.sign;
   }
 
-  return this->compare_abs(other_bigint) * sign <= -1;
+  return this->CompareAbs(other_bigint) * sign <= -1;
 }
 
 bool BigInt::operator==(const BigInt &other_bigint) const {
@@ -231,7 +231,7 @@ bool BigInt::operator==(const BigInt &other_bigint) const {
     return false;
   }
 
-  return this->compare_abs(other_bigint) == 0;
+  return this->CompareAbs(other_bigint) == 0;
 }
 
 bool BigInt::operator!=(const BigInt &other_bigint) const {
@@ -239,7 +239,7 @@ bool BigInt::operator!=(const BigInt &other_bigint) const {
     return true;
   }
 
-  return this->compare_abs(other_bigint) != 0;
+  return this->CompareAbs(other_bigint) != 0;
 }
 
 std::ostream &operator<<(std::ostream &out, const BigInt &bigint) {
@@ -326,7 +326,7 @@ BigInt BigInt::operator*(int digit) const {
   return part_res;
 }
 
-int BigInt::compare_abs(const BigInt &other_bigint) const {
+int BigInt::CompareAbs(const BigInt &other_bigint) const {
   if (other_bigint.size > size) {
     return 1;
   }
