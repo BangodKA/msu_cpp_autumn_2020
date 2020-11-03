@@ -8,7 +8,7 @@
 
 BigInt::BigInt(int value) {
   size_t capacity = 1;
-  data = new char [capacity];
+  data = new unsigned int [capacity]();
   size = 0;
   sign = (value >= 0) ? 1 : -1;
 
@@ -20,9 +20,9 @@ BigInt::BigInt(int value) {
       Realloc(capacity);
     }
 
-    data[size] = value % 10 + '0';
+    data[size] = value % max_ten_pow;
     size++;
-    value /= 10;
+    value /= max_ten_pow;
     if (value == 0) {
       break;
     }
@@ -37,27 +37,28 @@ BigInt::BigInt(const std::string &data_, size_t size_) {
 
   if (data_.empty()) {
     size = size_;
-    data = new char [size];
-    data[0] = '0';
+    data = new unsigned int [size]();
     return;
   }
   
-  int offset = !std::isdigit(data_[0]);
-  size = data_.size() - offset;
+  size_t offset = !std::isdigit(data_[0]);
+  size = (data_.size() - offset);
   sign = (data_[0] == '-') ? -1 : 1;
   
   if (size == 0 || (!std::isdigit(data_[0]) && data_[0] != '+' && data_[0] != '-')) {
     throw std::runtime_error("Error: not a number!");
   }
 
-  data = new char [size];
+  size = size / MAX_DIG_AMOUNT + (size % MAX_DIG_AMOUNT != 0);
+
+  data = new unsigned int [size]();
 
   ReverseNumber(data_, offset);
 }
 
 BigInt::BigInt(const BigInt &other_bigint) : sign(other_bigint.sign), 
                                              size(other_bigint.size) {
-  data = new char [size];
+  data = new unsigned int [size];
 
   for (size_t i = 0; i < size; ++i) {
     data[i] = other_bigint.data[i];
@@ -83,7 +84,7 @@ BigInt& BigInt::operator=(const BigInt &other_bigint) {
   sign = other_bigint.sign;
   size = other_bigint.size;
 
-  data = new char [size];
+  data = new unsigned int [size];
 
   for (size_t i = 0; i < size; ++i) {
     data[i] = other_bigint.data[i];
@@ -126,18 +127,18 @@ BigInt BigInt::operator+(const BigInt &other_bigint) const {
   BigInt res("", std::max(size, other_bigint.size));
   res.sign = sign;
   
-  int dec = 0;
+  unsigned int dec = 0;
   for (size_t i = 0; i < res.size; ++i) {
-    int next_dig = dec + ((i < size) ? (data[i] - '0')  : 0);
-    next_dig += (i < other_bigint.size) ? 
-                     (other_bigint.data[i] - '0') : 0;
+    unsigned int next_part = dec + ((i < size) ? data[i]  : 0);
+    next_part += (i < other_bigint.size) ? 
+                      other_bigint.data[i] : 0;
 
-    res.data[i] = '0' + next_dig % 10;
-    dec = next_dig / 10;
+    res.data[i] = next_part % max_ten_pow;
+    dec = next_part / max_ten_pow;
   }
 
   if (dec == 1) {
-    res.AddExtraDig('1');
+    res.AddExtraPart(dec);
   }
   
   return res;
@@ -170,17 +171,27 @@ BigInt BigInt::operator-(const BigInt &other_bigint) const {
 }
 
 BigInt BigInt::operator*(const BigInt &other_bigint) const {
-  BigInt res("0");
+  BigInt res(0);
+  BigInt cur_part(*this);
 
   for (size_t i = 0; i < other_bigint.size; ++i) {
-    size_t cur_size = size + i;
-    BigInt cur_part("", cur_size);
-    
-    for (size_t k = 0; k < cur_size; ++k) {
-      cur_part.data[k] = (cur_size - k <= size) ? data[k - i] : '0';
-    }
+    unsigned int cur_mult = other_bigint.data[i];
+    int cur_part_len = MAX_DIG_AMOUNT;
 
-    res = res + cur_part * (other_bigint.data[i] - '0');
+    while (cur_mult >= 0) {
+      res = res + cur_part * (cur_mult % 10);
+      cur_mult /= 10;
+      cur_part_len--;
+      cur_part.MulTen();
+      if (cur_mult == 0) {
+        if (i != other_bigint.size - 1) {
+          for (int zeros = 0; zeros < cur_part_len; ++zeros) {
+            cur_part.MulTen();
+          }
+        }
+        break;
+      }
+    }
   }
 
   res.sign = sign * other_bigint.sign;
@@ -247,24 +258,43 @@ std::ostream &operator<<(std::ostream &out, const BigInt &bigint) {
     out << '-';
   }
   for (size_t i = bigint.size; i > 0; --i) {
+    if (i != bigint.size) {
+      unsigned int cur_part = bigint.data[i - 1];
+      int cur_part_len = MAX_DIG_AMOUNT;
+      while (cur_part > 0) {
+        cur_part /= 10;
+        cur_part_len--;
+      }
+
+      for (int zeros = 0; zeros < cur_part_len; ++zeros) {
+        out << 0;
+      }
+    }
     out << bigint.data[i - 1];
   }
   return out;
 }
 
-void BigInt::ReverseNumber(const std::string not_reversed, int offset) {
-  for (size_t i = offset; i < not_reversed.size(); ++i) {
-    if (!std::isdigit(not_reversed[i])) {
+void BigInt::ReverseNumber(const std::string not_reversed, size_t offset) {
+  size_t cur_pos = 1;
+  for (size_t i = not_reversed.size(); i > offset; --i) {
+    if (!std::isdigit(not_reversed[i - 1])) {
         delete [] data;
         throw std::runtime_error("Error: not a number!");
     }
-    data[size - 1 - i + offset] = not_reversed[i];
+    data[(not_reversed.size() - i) / MAX_DIG_AMOUNT] += (not_reversed[i - 1] -  '0') * cur_pos;
+
+    if ((not_reversed.size() - i + 1) % MAX_DIG_AMOUNT == 0) {
+      cur_pos = 1;
+    } else {
+      cur_pos *= 10;
+    }
   }
 }
 
 
 void BigInt::Realloc(int capacity) {
-  char *new_res = new char [(capacity == -1) ? size : capacity];
+  unsigned int *new_res = new unsigned int [(capacity == -1) ? size : capacity]();
 
   for (size_t i = 0; i < size; ++i) {
     new_res[i] = data[i];
@@ -277,9 +307,9 @@ int BigInt::SubstractWithLeading(const BigInt &lhs, const BigInt &rhs, bool reve
   int dec = 0;
   int leading_zero_counter = 0;
   for (size_t i = 0; i < size; ++i) {
-    int first_dig = (i < lhs.size) ? (lhs.data[i] - '0')  : 0;
+    int first_dig = (i < lhs.size) ? lhs.data[i]  : 0;
     int second_dig = (i < rhs.size) ? 
-                    (rhs.data[i] - '0') : 0;
+                      rhs.data[i] : 0;
     
     int next_dig = dec + ((reverse) ? second_dig - first_dig : 
                                       first_dig - second_dig);
@@ -288,19 +318,19 @@ int BigInt::SubstractWithLeading(const BigInt &lhs, const BigInt &rhs, bool reve
 
     if (next_dig < 0) {
       dec = -1;
-      next_dig += 10;
+      next_dig += max_ten_pow;
     } else {
       dec = 0;
     }
 
-    data[i] = '0' + next_dig % 10;
+    data[i] = next_dig % max_ten_pow;
   }
   return leading_zero_counter;
 }
 
-void BigInt::AddExtraDig(char dec) {
+void BigInt::AddExtraPart(unsigned int dec) {
   this->size++;
-  char *new_res = new char [this->size];
+  unsigned int *new_res = new unsigned int [this->size];
   new_res[this->size - 1] = dec;
   for (size_t i = 0; i < this->size - 1; ++i) {
     new_res[i] = this->data[i];
@@ -309,18 +339,34 @@ void BigInt::AddExtraDig(char dec) {
   this->data = new_res;
 }
 
+void BigInt::MulTen() {
+  unsigned int dec = 0;
+
+  for (size_t i = 0; i < size; ++i) {
+    unsigned int cur_part = 0;
+    cur_part = data[i] * 10 + dec;
+    data[i] = cur_part % max_ten_pow;
+    dec = cur_part / max_ten_pow;
+  }
+  if (dec != 0) {
+    AddExtraPart(dec);
+  }
+
+}
+
+
 BigInt BigInt::operator*(int digit) const {
   BigInt part_res("", size);
 
   int dec = 0;
   for (size_t i = 0; i < size; ++i) {
-    int next_dig = digit * (data[i] - '0');
-    part_res.data[i] = '0' + (next_dig % 10 + dec);
-    dec = next_dig / 10;
+    int next_dig = digit * data[i];
+    part_res.data[i] = next_dig % max_ten_pow + dec;
+    dec = next_dig / max_ten_pow;
   }
 
   if (dec > 0) {
-    part_res.AddExtraDig((dec - '0'));
+    part_res.AddExtraPart(dec);
   }
 
   return part_res;

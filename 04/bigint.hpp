@@ -1,8 +1,11 @@
 #pragma once
 
+#include <cmath>
 #include <iostream>
+#include <limits>
 #include <string>
 
+#define MAX_DIG_AMOUNT (std::numeric_limits<unsigned int>::digits10 - 1)
 class BigInt {
  public:
   BigInt(int value);
@@ -27,14 +30,17 @@ class BigInt {
  private:
   friend std::ostream& operator<<(std::ostream &out, const BigInt &bigint);
 
-  void ReverseNumber(const std::string not_reversed, int offset);
+  void ReverseNumber(const std::string not_reversed, size_t offset);
   int SubstractWithLeading(const BigInt &lhs, const BigInt &rhs, bool reverse);
   void Realloc(int capacity = -1);
-  void AddExtraDig(char dec);
+  void AddExtraPart(unsigned int dec);
+  void MulTen();
   BigInt operator*(int digit) const;
   int CompareAbs(const BigInt &other_bigint) const;
   
-  char *data;
+  unsigned int *data;
   int sign = 1;
   size_t size;
+
+  const unsigned int max_ten_pow = std::pow(10, MAX_DIG_AMOUNT);
 };
