@@ -30,7 +30,7 @@ class BigInt {
  private:
   friend std::ostream& operator<<(std::ostream &out, const BigInt &bigint);
 
-  void ReverseNumber(const std::string not_reversed, size_t offset);
+  void ReverseNumber(const std::string &not_reversed, size_t offset);
   int SubstractWithLeading(const BigInt &lhs, const BigInt &rhs, bool reverse);
   void Realloc(int capacity = -1);
   void AddExtraPart(unsigned int dec);

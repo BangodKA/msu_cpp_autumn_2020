@@ -275,7 +275,7 @@ std::ostream &operator<<(std::ostream &out, const BigInt &bigint) {
   return out;
 }
 
-void BigInt::ReverseNumber(const std::string not_reversed, size_t offset) {
+void BigInt::ReverseNumber(const std::string &not_reversed, size_t offset) {
   size_t cur_pos = 1;
   for (size_t i = not_reversed.size(); i > offset; --i) {
     if (!std::isdigit(not_reversed[i - 1])) {
