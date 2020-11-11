@@ -13,15 +13,15 @@ Error Deserializer::load_arg(ArgT &&arg) {
     } else if (next_var == "false") {
       arg = false;
     } else {
-      inp.clear();
-      return Error::CorruptedArchive;
+      return HandleError();
     }
   } else if (std::is_same<uint64_t&, ArgT>::value) {
     try {
-      arg = std::stoll(next_var);
-    } catch (const std::exception&) {
-      inp.clear();
-      return Error::CorruptedArchive;
+      arg = std::stoull(next_var);
+    } catch (const std::out_of_range&) {
+      return HandleError();
+    } catch (const std::invalid_argument&) {
+      return HandleError();
     }
   } else {
     inp.clear();
@@ -32,10 +32,11 @@ Error Deserializer::load_arg(ArgT &&arg) {
 
 template <class ArgT, class... ArgsT>
 Error Deserializer::load_arg(ArgT &&arg, ArgsT &&...args) {
-  if (load_arg(arg) == Error::CorruptedArchive) {
-    return Error::CorruptedArchive;
+  Error res = load_arg(std::forward<ArgT>(arg));
+  if (res != Error::NoError) {
+    return res;
   }
-  return load_arg(args...);
+  return load_arg(std::forward<ArgsT>(args)...);
 }
 
 template <class T>
@@ -45,5 +46,10 @@ Error Deserializer::load(T& object) {
 
 template <class... ArgsT>
 Error Deserializer::operator()(ArgsT &&...args) {
-  return load_arg(args...);
+  return load_arg(std::forward<ArgsT>(args)...);
+}
+
+Error Deserializer::HandleError() {
+  inp.clear();
+  return Error::CorruptedArchive;
 }

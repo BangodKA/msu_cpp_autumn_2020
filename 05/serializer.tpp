@@ -7,9 +7,7 @@ template <class ArgT>
 Error Serializer::save_arg(ArgT &&arg) {
   std::stringstream next_var;
   next_var << arg;
-  if (std::is_same<bool, ArgT>::value || 
-      std::is_same<bool&, ArgT>::value ||
-      std::is_same<const bool&, ArgT>::value) {
+  if (CheckIfBool(std::forward<ArgT>(arg))) {
     if (next_var.str() == "1") {
       out << "true";
     } else {
@@ -23,7 +21,10 @@ Error Serializer::save_arg(ArgT &&arg) {
 
 template <class ArgT, class... ArgsT>
 Error Serializer::save_arg(ArgT &&arg, ArgsT &&...args) {
-  save_arg(std::forward<ArgT>(arg));
+  Error res = save_arg(std::forward<ArgT>(arg));
+  if (res != Error::NoError) {
+    return res;
+  }
   out << Separator;
   return save_arg(std::forward<ArgsT>(args)...);
 }
@@ -35,5 +36,12 @@ Error Serializer::save(T& object) {
 
 template <class... ArgsT>
 Error Serializer::operator()(ArgsT &&...args) {
-  return save_arg(args...);
+  return save_arg(std::forward<ArgsT>(args)...);
+}
+
+template <class ArgT>
+bool Serializer::CheckIfBool(ArgT &&) {
+  return std::is_same<bool, ArgT>::value || 
+         std::is_same<bool&, ArgT>::value ||
+         std::is_same<const bool&, ArgT>::value;
 }

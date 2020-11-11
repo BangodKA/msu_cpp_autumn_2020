@@ -22,6 +22,8 @@ class Serializer {
   Error operator()(ArgsT &&...args);
     
  private:
+  template <class ArgT>
+  bool CheckIfBool(ArgT &&);
   std::ostream& out;
 };
 
