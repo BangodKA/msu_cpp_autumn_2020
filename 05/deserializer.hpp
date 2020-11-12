@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 
 #include "error.hpp"
 
@@ -9,10 +10,10 @@ class Deserializer {
 public:
   explicit Deserializer(std::istream& inp_);
 
-  template <class ArgT>
+  template <typename ArgT>
   Error load_arg(ArgT &&arg);
   
-  template <class ArgT, class... ArgsT>
+  template <typename ArgT, typename... ArgsT>
   Error load_arg(ArgT &&arg, ArgsT &&...args);
 
   template <class T>
@@ -23,6 +24,13 @@ public:
     
 private:
   Error HandleError();
+
+  Error deserialize(bool &arg, const std::string& next_var);
+  Error deserialize(uint64_t &arg, const std::string& next_var);
+
+  template<typename ArgT>
+  Error deserialize(ArgT &&arg, const std::string& next_var);
+
   std::istream& inp;
 };
 

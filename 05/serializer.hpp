@@ -22,8 +22,12 @@ class Serializer {
   Error operator()(ArgsT &&...args);
     
  private:
-  template <class ArgT>
-  bool CheckIfBool(ArgT &&);
+  Error serialize(bool arg);
+  Error serialize(uint64_t arg);
+
+  template<typename ArgT>
+  Error serialize(ArgT &&arg);
+
   std::ostream& out;
 };
 
