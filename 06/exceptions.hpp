@@ -12,7 +12,7 @@ class NotEnoughArgsError : public std::runtime_error {
     error_mes << file_ << "::" << line_ << "::" << mes_;
     mes = error_mes.str();
   }
-  const char* what() const throw() {
+  const char* what() const throw() override {
     return mes.c_str();
   }
  private:
@@ -27,7 +27,7 @@ class BraceUsageError : public std::runtime_error {
     error_mes << file_ << "::" << line_ << "::" << mes_;
     mes = error_mes.str();
   }
-  const char* what() const throw() {
+  const char* what() const throw() override {
     return mes.c_str();
   }
  private:
@@ -37,12 +37,12 @@ class BraceUsageError : public std::runtime_error {
 class ArgumentError : public std::runtime_error {
  public:
   ArgumentError(const char* file_, int line_, 
-                     const std::string& mes_) : std::runtime_error(mes_) {
+                const std::string& mes_) : std::runtime_error(mes_) {
     std::ostringstream error_mes;
     error_mes << file_ << "::" << line_ << "::" << mes_;
     mes = error_mes.str();
   }
-  const char* what() const throw() {
+  const char* what() const throw() override {
     return mes.c_str();
   }
  private:
@@ -52,12 +52,12 @@ class ArgumentError : public std::runtime_error {
 class TooManyArgsError : public std::runtime_error {
  public:
   TooManyArgsError(const char* file_, int line_, 
-                     const std::string& mes_) : std::runtime_error(mes_) {
+                   const std::string& mes_) : std::runtime_error(mes_) {
     std::ostringstream error_mes;
     error_mes << file_ << "::" << line_ << "::" << mes_;
     mes = error_mes.str();
   }
-  const char* what() const throw() {
+  const char* what() const throw() override {
     return mes.c_str();
   }
  private:

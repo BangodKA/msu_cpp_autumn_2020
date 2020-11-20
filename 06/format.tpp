@@ -6,7 +6,7 @@
 #include "exceptions.hpp"
 
 template <typename ArgT>
-void GetArg(std::ostream& res, long needed_num, long cur_num, ArgT &&arg) {
+void GetArg(std::ostream& res, long needed_num, long cur_num, const ArgT &arg) {
   if (needed_num != cur_num) {
     throw NotEnoughArgsError(__FILE__, __LINE__, "Error: Not enough arguments in format");
   }
@@ -14,16 +14,16 @@ void GetArg(std::ostream& res, long needed_num, long cur_num, ArgT &&arg) {
 }
 
 template <typename ArgT, typename... ArgsT>
-void GetArg(std::ostream& res, long needed_num, long cur_num, ArgT &&arg, ArgsT &&...args) {
+void GetArg(std::ostream& res, long needed_num, long cur_num, const ArgT &arg, const ArgsT &...args) {
   if (needed_num == cur_num) {
     res << arg;
   } else {
-    GetArg(res, needed_num, cur_num + 1, std::forward<ArgsT>(args)...);
+    GetArg(res, needed_num, cur_num + 1, args...);
   }
 }
 
 template <typename... ArgsT>
-std::string format(const std::string &inp, ArgsT &&...args) {
+std::string format(const std::string &inp, const ArgsT &...args) {
   // args_amount = std::forward_as_tuple(args...).size();
   std::ostringstream res;
   bool arg_place = false;
@@ -39,9 +39,9 @@ std::string format(const std::string &inp, ArgsT &&...args) {
         arg_place = false;
         if (arg_num.size() > 0) {
           try {
-            GetArg(res, std::stoul(arg_num), 1, std::forward<ArgsT>(args)...);
+            GetArg(res, std::stoul(arg_num), 1, args...);
             arg_num.clear();
-          } catch (std::logic_error&) {
+          } catch (const std::logic_error&) {
             throw TooManyArgsError(__FILE__, __LINE__, "Error: too big arg number");
           }
         } else {
