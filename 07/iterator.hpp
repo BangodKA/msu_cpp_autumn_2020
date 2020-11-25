@@ -17,14 +17,14 @@ class RACIterator {
 
   RACIterator<ValueType>& operator+=(difference_type n);
 
-  RACIterator<ValueType> operator+(difference_type n);
+  RACIterator<ValueType> operator+(difference_type n) const;
 
   friend RACIterator<ValueType> operator+(difference_type n,
                                           const RACIterator<ValueType>& a);
 
   RACIterator<ValueType>& operator-=(difference_type n);
 
-  RACIterator<ValueType> operator-(difference_type n);
+  RACIterator<ValueType> operator-(difference_type n) const;
 
   friend RACIterator<ValueType> operator-(difference_type n,
                                           const RACIterator<ValueType>& a);
@@ -34,7 +34,7 @@ class RACIterator {
   RACIterator<ValueType> operator++(int);
   RACIterator<ValueType> operator--(int);
 
-  difference_type operator-(const RACIterator<ValueType>& rhs);
+  difference_type operator-(const RACIterator<ValueType>& rhs) const;
 
   reference operator[] (difference_type n);
   const_reference operator[] (difference_type n) const;

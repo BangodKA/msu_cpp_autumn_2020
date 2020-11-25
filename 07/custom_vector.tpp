@@ -202,27 +202,13 @@ typename Vector<T, AllocT>::const_reverse_iterator Vector<T, AllocT>::rend() con
 
 template <typename T, class AllocT>
 void Vector<T, AllocT>::PushBack(const T &value) {
-  if (size >= capacity) {
-    auto new_cap = capacity == 0 ? 1 : 2 * capacity;
-    auto new_data = AllocT().allocate(new_cap);
-    std::move(begin(), end(), new_data);
-    AllocT().deallocate(data, capacity);
-    data = new_data;
-    capacity = new_cap;
-  }
+  Realloc();
   data[size++] = value;
 }
 
 template <typename T, class AllocT>
 void Vector<T, AllocT>::PushBack(T &&value) {
-  if (size >= capacity) {
-    auto new_cap = capacity == 0 ? 1 : 2 * capacity;
-    auto new_data = AllocT().allocate(new_cap);
-    std::move(begin(), end(), new_data);
-    AllocT().deallocate(data, capacity);
-    data = new_data;
-    capacity = new_cap;
-  }
+  Realloc();
   data[size++] = std::move(value);
 }
 
@@ -233,7 +219,7 @@ typename Vector<T, AllocT>::reference Vector<T, AllocT>::EmplaceBack(Args&&... a
     capacity *= 2;
     auto new_data = AllocT().allocate(capacity);
     if (data != nullptr) {
-      delete [] data;
+      AllocT().deallocate(data, capacity / 2);
     }
     data = new_data;
   }
@@ -251,10 +237,7 @@ void Vector<T, AllocT>::PopBack() {
 
 template <typename T, class AllocT>
 bool Vector<T, AllocT>::Empty() const noexcept {
-  if (size == 0) {
-    return true;
-  }
-  return false;
+  return size == 0;
 }
 
 template <typename T, class AllocT>
@@ -274,4 +257,16 @@ constexpr bool operator==(const Vector<T,Alloc>& lhs,
     }
   }
   return true;
+}
+
+template <typename T, class AllocT>
+void Vector<T, AllocT>::Realloc() {
+  if (size >= capacity) {
+    auto new_cap = capacity == 0 ? 1 : 2 * capacity;
+    auto new_data = AllocT().allocate(new_cap);
+    std::move(begin(), end(), new_data);
+    AllocT().deallocate(data, capacity);
+    data = new_data;
+    capacity = new_cap;
+  }
 }

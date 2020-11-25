@@ -8,7 +8,7 @@ RACIterator<ValueType>& RACIterator<ValueType>::operator+=(difference_type n) {
 }
 
 template <class ValueType>
-RACIterator<ValueType> RACIterator<ValueType>::operator+(difference_type n) {
+RACIterator<ValueType> RACIterator<ValueType>::operator+(difference_type n) const {
   RACIterator<ValueType> temp(*this);
   return temp += n;
 }
@@ -27,7 +27,7 @@ RACIterator<ValueType>& RACIterator<ValueType>::operator-=(difference_type n) {
 }
 
 template <class ValueType>
-RACIterator<ValueType> RACIterator<ValueType>::operator-(difference_type n) {
+RACIterator<ValueType> RACIterator<ValueType>::operator-(difference_type n) const {
   RACIterator<ValueType> temp(*this);
   return temp -= n;
 }
@@ -67,7 +67,7 @@ RACIterator<ValueType> RACIterator<ValueType>::operator--(int) {
 
 template <class ValueType>
 typename RACIterator<ValueType>::difference_type 
-  RACIterator<ValueType>::operator-(const RACIterator<ValueType>& rhs) {
+  RACIterator<ValueType>::operator-(const RACIterator<ValueType>& rhs) const {
   return this->current_ - rhs.current_;
 }
 

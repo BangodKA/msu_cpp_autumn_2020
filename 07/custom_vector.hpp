@@ -80,6 +80,8 @@ class Vector {
   void Clear() noexcept;
 
  private:
+  void Realloc();
+
   pointer data = nullptr;
   size_type size = 0;
   size_type capacity = 0;
