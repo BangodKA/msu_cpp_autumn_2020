@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-
-#include "output.hpp"
+#include "../custom_vector.hpp"
+#include "operators.hpp"
 
 void TestResize() {
   std::ostringstream my_vec_out;
@@ -37,7 +37,7 @@ void TestResize() {
   my_vec_out << "After resize down to 2: ";
   for(auto& el: my_nums) my_vec_out << el << ' ';
   my_vec_out << '\n';
-
-  output_res(my_vec_out, std_vec_out, my_nums, std_nums);
+  
   assert(my_vec_out.str() == std_vec_out.str());
+  assert(std_nums == my_nums);
 }

@@ -7,8 +7,8 @@
 #include <string>
 #include <vector>
 
-
-#include "output.hpp"
+#include "../custom_vector.hpp"
+#include "operators.hpp"
 
 void TestEmptyClearSizePushPop() {
   { // EmptyClear
@@ -62,8 +62,7 @@ void TestEmptyClearSizePushPop() {
     
     my_numbers.PopBack();
     std_numbers.pop_back();
- 
-    output_res(my_vec_out, std_vec_out, my_numbers, std_numbers);
-    assert(my_vec_out.str() == std_vec_out.str());
+
+    assert(std_numbers == my_numbers);
   }
 }

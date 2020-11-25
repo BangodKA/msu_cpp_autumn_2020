@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
-
-#include "output.hpp"
+#include "../custom_vector.hpp"
+#include "operators.hpp"
 
 void TestBeginEnd() {
   std::ostringstream my_vec_out;
@@ -31,13 +31,9 @@ void TestBeginEnd() {
   assert(my_vec_out.str() == std_vec_out.str());
 
   // Sums all integers in the vector nums (if any), printing only the result.
-  my_vec_out << std::accumulate(my_nums.begin(), my_nums.end(), 0) << '\n';
-  std_vec_out << std::accumulate(std_nums.begin(), std_nums.end(), 0) << '\n';
-  assert(my_vec_out.str() == std_vec_out.str());
-  
-  my_vec_out << std::accumulate(my_nums.rbegin(), my_nums.rend(), 0) << '\n';
-  std_vec_out << std::accumulate(std_nums.rbegin(), std_nums.rend(), 0) << '\n';
-  assert(my_vec_out.str() == std_vec_out.str());
+  assert(std::accumulate(my_nums.begin(), my_nums.end(), 0) == std::accumulate(std_nums.begin(), std_nums.end(), 0));
+
+  assert(std::accumulate(my_nums.rbegin(), my_nums.rend(), 0) == std::accumulate(std_nums.rbegin(), std_nums.rend(), 0));
 
   // Prints the first fruit in the vector fruits, checking if there is any.
   if (!std_fruits.empty())

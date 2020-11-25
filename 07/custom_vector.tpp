@@ -220,12 +220,7 @@ template <typename T, class AllocT>
 template <class... Args>
 typename Vector<T, AllocT>::reference Vector<T, AllocT>::EmplaceBack(Args&&... args) {
   if (size == capacity) {
-    capacity *= 2;
-    auto new_data = AllocT().allocate(capacity);
-    if (data != nullptr) {
-      AllocT().deallocate(data, capacity / 2);
-    }
-    data = new_data;
+    Realloc();
   }
   auto elem = new (data + size) T(std::move(args)...);
   ++size;
@@ -266,9 +261,11 @@ constexpr bool operator==(const Vector<T,Alloc>& lhs,
 template <typename T, class AllocT>
 void Vector<T, AllocT>::Realloc() {
   auto new_cap = capacity == 0 ? 1 : 2 * capacity;
+  auto new_size = size;
   auto new_data = AllocT().allocate(new_cap);
   std::move(begin(), end(), new_data);
-  AllocT().deallocate(data, capacity);
+  this -> ~Vector();
   data = new_data;
   capacity = new_cap;
+  size = new_size;
 }
