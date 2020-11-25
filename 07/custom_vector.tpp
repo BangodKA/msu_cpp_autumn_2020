@@ -128,7 +128,7 @@ void Vector<T, AllocT>::Resize(size_type size_, const_reference value) {
     if (size_ > capacity) {
       size_type old_capacity = capacity;
       while (capacity < size_) {
-        capacity *= 2;
+        capacity = capacity == 0 ? 1 : 2 * capacity;
       }
       Vector<T, AllocT> new_vector(capacity);
       std::move(begin(), end(), new_vector.begin());
@@ -202,13 +202,17 @@ typename Vector<T, AllocT>::const_reverse_iterator Vector<T, AllocT>::rend() con
 
 template <typename T, class AllocT>
 void Vector<T, AllocT>::PushBack(const T &value) {
-  Realloc();
+  if (size >= capacity) {
+    Realloc();
+  }
   data[size++] = value;
 }
 
 template <typename T, class AllocT>
 void Vector<T, AllocT>::PushBack(T &&value) {
-  Realloc();
+  if (size >= capacity) {
+    Realloc();
+  }
   data[size++] = std::move(value);
 }
 
@@ -261,12 +265,10 @@ constexpr bool operator==(const Vector<T,Alloc>& lhs,
 
 template <typename T, class AllocT>
 void Vector<T, AllocT>::Realloc() {
-  if (size >= capacity) {
-    auto new_cap = capacity == 0 ? 1 : 2 * capacity;
-    auto new_data = AllocT().allocate(new_cap);
-    std::move(begin(), end(), new_data);
-    AllocT().deallocate(data, capacity);
-    data = new_data;
-    capacity = new_cap;
-  }
+  auto new_cap = capacity == 0 ? 1 : 2 * capacity;
+  auto new_data = AllocT().allocate(new_cap);
+  std::move(begin(), end(), new_data);
+  AllocT().deallocate(data, capacity);
+  data = new_data;
+  capacity = new_cap;
 }
