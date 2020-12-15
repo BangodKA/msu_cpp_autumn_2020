@@ -27,7 +27,7 @@ int main() {
     assert(res == starting_perm);
   }
   // next files have different amount of numbers
-  { // 20 000
+  { // 15 000
     std::vector<uint64_t> starting_perm;
     ReadFile(starting_perm, "Tests/test_2/test_2.txt");
     SortFile("Tests/test_2/test_2.txt");
@@ -36,7 +36,7 @@ int main() {
     std::sort(starting_perm.begin(), starting_perm.end());
     assert(res == starting_perm);
   }
-  { // 4 000 000
+  { // 3 000 000
     std::vector<uint64_t> starting_perm;
     ReadFile(starting_perm, "Tests/test_3/test_3.txt");
     SortFile("Tests/test_3/test_3.txt");
