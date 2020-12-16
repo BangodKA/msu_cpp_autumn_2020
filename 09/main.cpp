@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <cassert>
-#include <random>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <vector>
 
 #include "sort.hpp"
