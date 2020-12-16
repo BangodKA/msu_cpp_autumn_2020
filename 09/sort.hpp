@@ -22,4 +22,4 @@ void PrepareFiles(const std::string& filepath,
 
 int ProcessFiles(std::ifstream& inp, const std::string& dir);
 
-void SortFile (std::string filepath);
+std::string SortFile (std::string filepath);

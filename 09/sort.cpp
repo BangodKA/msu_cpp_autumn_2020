@@ -153,7 +153,7 @@ int ProcessFiles(std::ifstream& inp, const std::string& dir) {
   return step_counter;
 }
 
-void SortFile (std::string filepath) {
+std::string SortFile (std::string filepath) {
   std::ifstream inp(filepath);
   if (!inp) { 
     throw std::runtime_error("Input file opening failed::" + filepath);
@@ -174,5 +174,6 @@ void SortFile (std::string filepath) {
     std::rename((dir + "odd_step_res.txt").c_str(), (dir + name + "_sorted.txt").c_str());
     std::remove((dir + "even_step_res.txt").c_str());
   }
+  return name + "_sorted.txt";
 }
 
